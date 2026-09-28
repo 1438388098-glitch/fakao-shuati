@@ -1,0 +1,47 @@
+<%- include('partials/head', { title }) %>
+<div class="page-head">
+  <div class="eyebrow">碎片时间 · 采分点记忆</div>
+  <h1>背诵</h1>
+  <div class="sub"><%= cur.name %> · 共 <%= cards.length %> 问，已掌握 <%= cards.filter(c=>c.mastered).length %></div>
+</div>
+<div class="tabs">
+  <% for (const s of subjects) { %>
+    <a class="tab <%= s.key === cur.key ? 'active' : '' %>" href="<%= base %>/recite?s=<%= s.key %>"><%= s.name.replace('（真题）','').replace('（选做）','') %></a>
+  <% } %>
+</div>
+<% for (const c of cards) { const fid = 'f' + c.qid.replace(/[^a-z0-9]/gi,'') + '_' + c.subOrder; %>
+  <div class="fcard <%= c.mastered ? 'done' : '' %>" id="<%= fid %>">
+    <div class="finner">
+      <div class="fface front">
+        <div class="q" onclick="document.getElementById('<%= fid %>').classList.add('open')">
+          <b><%= c.snText %></b> <span class="muted small">第<%= c.subOrder %>问 · <%= c.subScore %>分</span>
+          <div class="sq"><%= c.subQuestion %></div>
+          <span class="hint">点击卡片查看参考答案与采分点</span>
+        </div>
+      </div>
+      <div class="fface back">
+        <div class="q" onclick="document.getElementById('<%= fid %>').classList.remove('open')">
+          <b><%= c.snText %> · 第<%= c.subOrder %>问</b> <span class="hint">点击收起</span>
+        </div>
+        <p style="margin:8px 0"><%= c.answer.length > 420 ? c.answer.slice(0, 420) + '…' : c.answer %></p>
+        <% if (c.points.length) { %>
+        <div class="pts">
+          <% for (const p of c.points) { %>
+            <span class="pt"><b><%= p.score %></b><%= p.text %><%= p.whiteList && p.whiteList.length ? ' 〔等义：' + p.whiteList.map(w => w.text).join('／') + '〕' : '' %></span>
+          <% } %>
+        </div>
+        <% } %>
+        <button class="btn ghost small mbtn" data-qid="<%= c.qid %>" data-sub="<%= c.subOrder %>"><%= c.mastered ? '取消掌握' : '标记已掌握' %></button>
+      </div>
+    </div>
+  </div>
+<% } %>
+<script>
+  document.querySelectorAll('.mbtn').forEach(b => b.onclick = async (e) => {
+    e.stopPropagation();
+    await fetch(base + '/api/recite/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qid: b.dataset.qid, subOrder: +b.dataset.sub }) });
+    location.reload();
+  });
+</script>
+<%- include('partials/foot') %>

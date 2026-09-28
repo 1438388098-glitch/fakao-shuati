@@ -1,0 +1,42 @@
+<%- include('partials/head', { title }) %>
+<div class="card narrow">
+  <h1>设置</h1>
+  <% if (saved) { %><p class="ok-msg">已保存</p><% } %>
+  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <form method="post" action="<%= base %>/settings">
+    <label>倒计时目标日期（主观题考试日）</label>
+    <input type="date" name="countdown_date" value="<%= countdown %>">
+
+    <h2 class="set-sec">AI 批改（API 填充）</h2>
+    <label>批改方式</label>
+    <select name="ai_mode">
+      <option value="auto" <%= aiMode === 'auto' ? 'selected' : '' %>>自动（配置了 API 用 API，否则走 CLI）</option>
+      <option value="api" <%= aiMode === 'api' ? 'selected' : '' %>>API 直连（推荐，填下面三项）</option>
+      <option value="cli" <%= aiMode === 'cli' ? 'selected' : '' %>>本地 CLI（高级：AI 编码 CLI + 评分技能）</option>
+    </select>
+    <label>API 格式</label>
+    <select name="ai_format">
+      <option value="openai" <%= aiFormat === 'openai' ? 'selected' : '' %>>OpenAI 兼容（/chat/completions）</option>
+      <option value="anthropic" <%= aiFormat === 'anthropic' ? 'selected' : '' %>>Anthropic 兼容（/v1/messages）</option>
+    </select>
+    <label>Base URL（到版本号为止，如 https://api.openai.com/v1）</label>
+    <input type="url" name="ai_base_url" value="<%= aiBaseUrl %>" placeholder="https://api.openai.com/v1" autocomplete="off">
+    <label>模型</label>
+    <input type="text" name="ai_model" value="<%= aiModel %>" placeholder="如 gpt-4o-mini / deepseek-chat / glm-4.7-flash" autocomplete="off">
+    <label>API Key <%= aiKeyMask ? '（' + aiKeyMask + '，留空不改）' : '' %></label>
+    <input type="password" name="ai_api_key" placeholder="<%= aiKeyMask ? '留空保持不变' : 'sk-…' %>" autocomplete="off">
+    <% if (aiKeyMask) { %>
+      <label class="chk"><input type="checkbox" name="ai_clear_key" value="1" style="width:auto"> 清除已存 Key</label>
+    <% } %>
+    <p class="muted small">Key 仅保存在你自己的服务器数据库中，不会出现在代码或日志里。批改时题目、你的作答与采分点会发送到你填写的 API 端点。</p>
+
+    <h2 class="set-sec">账号</h2>
+    <label>旧密码（改密码时填）</label>
+    <input type="password" name="old_password" autocomplete="off">
+    <label>新密码（留空则不改）</label>
+    <input type="password" name="new_password" autocomplete="off" minlength="6">
+    <button type="submit">保存</button>
+  </form>
+  <p class="muted small">批改报告随时可在 服务器 data\批改记录\ 目录导出，与本地批改记录互通。</p>
+</div>
+<%- include('partials/foot') %>

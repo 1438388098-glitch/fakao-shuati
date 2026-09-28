@@ -1,0 +1,19 @@
+{
+  "name": "fakao-shuati",
+  "version": "0.1.0",
+  "description": "法考主观题自托管刷题平台：题库/作答/AI 采分点批改（API 填充，OpenAI/Anthropic 兼容）/看板/错题本/背诵",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "worker": "node worker/pc-worker.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  },
+  "license": "MIT"
+}

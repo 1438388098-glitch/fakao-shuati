@@ -1,0 +1,91 @@
+<%- include('partials/head', { title, wideShell: true }) %>
+<div class="attempt-head">
+  <h1><%= q.snText %> <span class="muted small"><%= q.score %>分 · <%= q.subs.length %>问</span></h1>
+  <div class="timer-box">
+    <select id="timerMin">
+      <option value="0">不限时</option>
+      <option value="50" selected>50 分钟</option>
+      <option value="40">40 分钟</option>
+      <option value="30">30 分钟</option>
+    </select>
+    <span id="timerShow" class="mono">--:--</span>
+    <button id="timerBtn" class="btn ghost small">开始计时</button>
+  </div>
+</div>
+<div class="attempt-cols">
+  <div class="card stem"><%- q.stem.replace(/\n/g,'<br>') %></div>
+  <form id="answerForm" class="attempt-subs">
+    <% const answers = JSON.parse(attempt.answers_json || '{}'); %>
+    <% for (const s of q.subs) { %>
+      <div class="card sub">
+        <h3>第<%= s.subOrder %>问 <span class="muted small"><%= s.subScore %>分</span></h3>
+        <p class="sq"><%= s.subQuestion %></p>
+        <textarea name="sub<%= s.subOrder %>" rows="6" placeholder="结论前置、分点作答…（自动保存）"><%= answers[s.subOrder] || '' %></textarea>
+      </div>
+    <% } %>
+    <div class="submit-bar">
+      <span id="saveState" class="muted small"></span>
+      <button type="button" id="submitBtn" class="btn primary">提交批改</button>
+    </div>
+  </form>
+</div>
+<div id="gradingBox" class="card hidden grading-wait">
+  <h3>批改进行中<span class="pen-dots"><i></i><i></i><i></i></span></h3>
+  <p class="muted" id="gradingMsg">AI 阅卷老师在按采分点判卷，通常需要 2~6 分钟。本页每 8 秒自动刷新状态。</p>
+  <p class="muted small">若长时间失败：可在对话里批改后，从 <a href="<%= base %>/import/<%= attempt.id %>">这里导入报告</a>。</p>
+</div>
+<script>
+  const attemptId = <%= attempt.id %>;
+  const form = document.getElementById('answerForm');
+  const collect = () => {
+    const answers = {};
+    form.querySelectorAll('textarea').forEach(t => answers[t.name.replace('sub','')] = t.value);
+    return answers;
+  };
+  let dirty = false, elapsed = 0;
+  const save = async () => {
+    document.getElementById('saveState').textContent = '保存中…';
+    await fetch(base + '/api/attempt', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ attemptId, answers: collect(), durationSec: elapsed }) });
+    document.getElementById('saveState').textContent = '已自动保存 ' + new Date().toLocaleTimeString();
+  };
+  form.addEventListener('input', () => { dirty = true; });
+  setInterval(() => { if (dirty) { dirty = false; save(); } }, 5000);
+  window.addEventListener('beforeunload', () => { if (dirty) { navigator.sendBeacon && navigator.sendBeacon(base + '/api/attempt', new Blob([JSON.stringify({attemptId, answers: collect(), durationSec: elapsed})], {type:'application/json'})); } });
+
+  // 计时器
+  let total = 0, timer = null;
+  document.getElementById('timerBtn').onclick = () => {
+    if (timer) { clearInterval(timer); timer = null; document.getElementById('timerBtn').textContent = '继续计时'; return; }
+    if (total === 0) { const m = +document.getElementById('timerMin').value; if (!m) { document.getElementById('timerShow').textContent='不限时'; return; } total = m * 60; }
+    document.getElementById('timerBtn').textContent = '暂停';
+    timer = setInterval(() => {
+      total--; elapsed++;
+      const mm = String(Math.floor(total/60)).padStart(2,'0'), ss = String(total%60).padStart(2,'0');
+      const el = document.getElementById('timerShow');
+      el.textContent = mm + ':' + ss;
+      el.className = total < 300 ? 'mono warn' : 'mono';
+      if (total <= 0) { clearInterval(timer); timer = null; el.textContent = '时间到'; }
+    }, 1000);
+  };
+
+  // 提交批改 + 轮询
+  document.getElementById('submitBtn').onclick = async () => {
+    document.getElementById('submitBtn').disabled = true;
+    await save();
+    const r = await fetch(base + '/api/attempt/' + attemptId + '/submit', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ answers: collect(), durationSec: elapsed }) });
+    if (!r.ok) { alert('提交失败'); document.getElementById('submitBtn').disabled = false; return; }
+    document.getElementById('gradingBox').classList.remove('hidden');
+    document.getElementById('gradingBox').scrollIntoView({behavior:'smooth'});
+    const poll = setInterval(async () => {
+      const s = await (await fetch(base + '/api/attempt/' + attemptId + '/status')).json();
+      if (s.status === 'graded' && s.gradingId) { clearInterval(poll); location.href = base + '/report/' + s.gradingId; }
+      if (s.status === 'failed') {
+        clearInterval(poll);
+        document.getElementById('gradingMsg').innerHTML = '自动批改失败。方案：① 启动 PC 工人后 <a href="" onclick="location.reload();return false">重试</a>；② <a href="<%= base %>/import/<%= attempt.id %>">在对话批改后手动导入报告</a>。';
+      }
+    }, 8000);
+  };
+</script>
+<%- include('partials/foot') %>

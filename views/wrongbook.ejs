@@ -1,0 +1,27 @@
+<%- include('partials/head', { title }) %>
+<h1>错题本 <span class="muted small">（未掌握 <%= rows.length %> 项）</span></h1>
+<% if (!rows.length) { %><div class="card"><p class="muted">空空如也。批改后未命中的采分点会自动出现在这里。</p></div><% } %>
+<% let curQ = null; %>
+<% for (const w of rows) { %>
+  <% if (!curQ || curQ !== w.question_id) { curQ = w.question_id; if (w.q) { %>
+    <div class="card">
+      <div class="subject-head">
+        <h3><%= w.q.snText %></h3>
+        <form method="post" action="<%= base %>/wrongbook/<%= w.id %>/rebrush"><button class="btn primary small">重刷此题</button></form>
+      </div>
+  <% } else { %>
+    <div class="card"><h3><%= w.question_id %>（题目已不在题库）</h3>
+  <% } %>
+      <ul class="misslist">
+  <% } %>
+        <li>
+          <span class="badge fail"><%= w.reason_type %></span>
+          <%= w.detail %>
+          <span class="muted small"><%= (w.created_at||'').slice(0,10) %></span>
+        </li>
+<% } %>
+<% if (rows.length) { %>
+      </ul>
+    </div>
+<% } %>
+<%- include('partials/foot') %>

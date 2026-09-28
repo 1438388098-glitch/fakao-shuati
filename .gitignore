@@ -1,0 +1,14 @@
+node_modules/
+data/
+题库数据/
+作答/
+批改记录/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.env
+.env.*
+!.env.example
+*.local
+npm-debug.log*

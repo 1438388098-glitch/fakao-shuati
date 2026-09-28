@@ -1,0 +1,41 @@
+<%- include('partials/head', { title }) %>
+<div class="page-head">
+  <div class="eyebrow">备考卷 · 分科练习</div>
+  <h1>题库</h1>
+  <div class="sub">真题 34 题 · 冲刺 21 题 · 批改后自动生成错题与报告</div>
+</div>
+<div class="strip">
+  <div class="cell"><div class="n" data-count="<%= subjects.reduce((a,s)=>a+s.questions.length,0) %>"><%= subjects.reduce((a,s)=>a+s.questions.length,0) %></div><div class="t">题目总数</div></div>
+  <div class="cell"><div class="n" data-count="<%= gradedCount %>"><%= gradedCount %></div><div class="t">已批改</div></div>
+  <div class="cell"><div class="n"><%= groups.length %><em> 组</em></div><div class="t">真题 / 冲刺</div></div>
+  <div class="cell"><div class="n"><%= countdownTarget ? Math.max(0, Math.ceil((new Date(countdownTarget) - Date.now()) / 86400000)) : '—' %><em> 天</em></div><div class="t">距主观题</div></div>
+</div>
+<% for (const g of groups) { const subs = subjects.filter(s => s.group === g); if (!subs.length) continue; %>
+  <h2 class="sec"><%= g %></h2>
+  <% for (const s of subs) { %>
+    <div class="card">
+      <div class="subject-head">
+        <h3><%= s.name %> <span class="muted small"><%= s.questions.length %> 题</span></h3>
+        <a class="btn ghost small" href="<%= base %>/recite?s=<%= s.key %>">背采分点</a>
+      </div>
+      <table class="qlist">
+        <thead><tr><th>题号</th><th>小问</th><th>总分</th><th style="width:110px">状态</th></tr></thead>
+        <tbody>
+        <% for (const q of s.questions) {
+             const st = q.grading ? `已批改 ${q.grading.score}/${q.grading.full_score}`
+               : (q.attempt ? (q.attempt.status === 'draft' ? '草稿' : (q.attempt.status === 'failed' ? '批改失败' : q.attempt.status)) : '未做');
+             const cls = q.grading ? 'ok' : (q.attempt ? (q.attempt.status === 'failed' ? 'fail' : 'doing') : '');
+        %>
+          <tr>
+            <td><a href="<%= base %>/attempt/<%= q.qid %>"><%= q.snText %></a></td>
+            <td class="muted"><%= q.subs.length %></td>
+            <td class="mono"><%= q.score %></td>
+            <td><span class="badge <%= cls %>"><%= st %></span></td>
+          </tr>
+        <% } %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+<% } %>
+<%- include('partials/foot') %>

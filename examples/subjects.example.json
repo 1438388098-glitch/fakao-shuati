@@ -1,0 +1,5 @@
+[
+  { "file": "刑法_raw.json", "key": "xingfa", "name": "刑法（真题）", "alias": "刑法", "group": "历年真题" },
+  { "file": "行政法_raw.json", "key": "xingzheng", "name": "行政法（真题）", "alias": "行政法", "group": "历年真题" },
+  { "file": "冲刺模拟_raw.json", "key": "chongci", "name": "冲刺模拟卷", "alias": "冲刺", "group": "冲刺专项" }
+]

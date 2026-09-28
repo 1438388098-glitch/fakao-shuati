@@ -1,0 +1,25 @@
+</main>
+</div>
+<% if (typeof showNavFlag === 'undefined' || showNavFlag) { %>
+<nav class="btmbar">
+  <a data-key="/" href="<%= base %>/"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>题库</a>
+  <a data-key="/dashboard" href="<%= base %>/dashboard"><svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-6"/></svg>看板</a>
+  <a data-key="/wrongbook" href="<%= base %>/wrongbook"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>错题</a>
+  <a data-key="/recite" href="<%= base %>/recite"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13.5l9 5 9-5"/></svg>背诵</a>
+  <a data-key="/settings" href="<%= base %>/settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9L19 19M19 5l-2.1 2.1M7.1 16.9L5 19"/></svg>设置</a>
+</nav>
+<script>
+  (function () {
+    const p = location.pathname.startsWith(base) ? location.pathname.slice(base.length) : location.pathname;
+    document.querySelectorAll('.ftab, .btmbar a').forEach(a => {
+      const k = a.dataset.key;
+      const on = k === '/' ? (p === '/' || p === '') : (p === k || p.startsWith(k + '/'));
+      if (on) a.classList.add('active');
+    });
+  })();
+</script>
+<% } %>
+<script src="<%= base %>/app.js?v=<%= assetV %>"></script>
+<footer class="foot">私人备考站 · 题库内容受版权保护 · 勿外传</footer>
+</body>
+</html>

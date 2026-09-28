@@ -1,0 +1,14 @@
+<%- include('partials/head', { title }) %>
+<div class="card narrow">
+  <h1>导入批改报告</h1>
+  <p class="muted">三级方案：在 ZCode 对话里完成批改后（skill 会在 批改记录\ 生成 .md 和 .json 两个文件），把内容粘贴到下面。</p>
+  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <form method="post" action="<%= base %>/import/<%= attemptId %>">
+    <label>JSON 结构化报告（必需）</label>
+    <textarea name="json" rows="10" placeholder='{"subject":...,"score":...,"subs":[...]}' required></textarea>
+    <label>Markdown 报告（可选）</label>
+    <textarea name="md" rows="6"></textarea>
+    <button type="submit">导入并查看报告</button>
+  </form>
+</div>
+<%- include('partials/foot') %>

@@ -1,0 +1,44 @@
+<%- include('partials/head', { title }) %>
+<div class="score-cards">
+  <div class="card score">
+    <div class="big"><span data-count="<%= data.score %>"><%= data.score %></span> <em class="muted">/ <%= data.fullScore %></em></div>
+    <div class="muted"><%= q.snText %> · 采分点得分</div>
+  </div>
+  <div class="card score">
+    <div class="big"><%= data.band ? data.band[0] + '~' + data.band[1] : '—' %></div>
+    <div class="muted">考场预估带（<%= data.tier || '按定档口径' %>）</div>
+  </div>
+  <div class="card score">
+    <div class="big"><%= data.summary ? '' : '—' %></div>
+    <div class="muted"><%= data.summary || '主因见报告' %></div>
+  </div>
+</div>
+
+<% if (data.subs && data.subs.length) { %>
+<div class="card">
+  <h2>逐问得分</h2>
+  <table class="qlist">
+    <thead><tr><th>问</th><th>得分</th><th>命中/总数</th><th>状态</th></tr></thead>
+    <tbody>
+    <% for (const s of data.subs) { const hit=(s.points||[]).filter(p=>p.verdict==='✓').length; %>
+      <tr>
+        <td>第<%= s.subOrder %>问</td>
+        <td class="mono"><%= s.score %> / <%= s.max %></td>
+        <td class="mono"><%= hit %> / <%= (s.points||[]).length %></td>
+        <td><% if (s.score >= s.max) { %><span class="badge ok">满分</span><% } else if (s.score <= 0) { %><span class="badge fail">零分</span><% } else { %><span class="badge doing">部分</span><% } %></td>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<div class="card">
+  <h2>深度复盘报告</h2>
+  <div class="md"><%- mdHtml %></div>
+</div>
+<div class="submit-bar">
+  <a class="btn ghost" href="<%= base %>/">回题库</a>
+  <a class="btn ghost" href="<%= base %>/wrongbook">看错题本</a>
+</div>
+<%- include('partials/foot') %>
