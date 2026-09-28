@@ -18,6 +18,17 @@ A self-hosted practice site for the Chinese bar exam (法考) essay paper: quest
 - **Multi-user**: data isolated per account (suitable for sharing one server with friends)
 - **Dark/light theme**: follows the system + manual toggle
 
+## Screenshots
+
+All screenshots use **demo data** (fictional cases written for this demo plus simulated grading reports — the repository ships no question content whatsoever); no real user data is included.
+
+| Question bank | Timed answering |
+|---|---|
+| ![Question bank (demo data)](docs/screenshots/bank.png) | ![Timed answering (demo data)](docs/screenshots/attempt.png) |
+| *Question bank (demo data)* | *Timed answering — stem pinned left, countdown visible (demo data)* |
+| ![In-depth review report (demo data)](docs/screenshots/report.png) | ![Statistics dashboard (demo data)](docs/screenshots/dashboard.png) |
+| *In-depth review report (demo data)* | *Statistics dashboard (demo data)* |
+
 ## Quick Start
 
 Requires Node.js ≥ 22.5 (uses the built-in `node:sqlite`).
