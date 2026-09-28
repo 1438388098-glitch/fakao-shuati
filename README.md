@@ -1,5 +1,7 @@
 # 法考主观题刷题平台（fakao-shuati）
 
+> **English TL;DR** — A self-hosted bar-exam (法考) essay practice platform: question bank browsing, timed answering, **AI grading against official scoring points** (✓ full / △ partial / ✗ miss), deep review reports, statistics dashboard, error book and recitation mode. Single-process Express + Node's built-in SQLite — zero native dependencies, runs on a cheap VPS. 5 smoke tests covering the full grading chain with a mocked AI API.
+
 自托管的法考主观题备考站：题库浏览、限时作答、**AI 按采分点批改**、深度复盘报告、统计看板、错题本、采分点背诵。单进程 Express + Node 内置 SQLite，零原生依赖，一台便宜 VPS 即可跑。
 
 > 本仓库**不含任何题目、答案或评分标准数据**。你需要自备拥有合法使用权的题库文件（格式见下文），放入数据目录即可。
