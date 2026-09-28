@@ -1,5 +1,7 @@
 English · [简体中文](./README.zh-CN.md)
 
+[![CI](https://github.com/1438388098-glitch/fakao-shuati/actions/workflows/ci.yml/badge.svg)](https://github.com/1438388098-glitch/fakao-shuati/actions/workflows/ci.yml)
+
 # fakao-shuati — Self-Hosted Bar-Exam Essay Practice Platform
 
 A self-hosted practice site for the Chinese bar exam (法考) essay paper: question bank browsing, timed answering, **AI grading against official scoring points** (✓ full / △ partial / ✗ miss), in-depth review reports, statistics dashboard, wrong-answer book and scoring-point recitation mode. Single-process Express + Node's built-in SQLite — zero native dependencies, runs on a cheap VPS. 5 smoke tests cover the full grading chain with a mocked AI API.

@@ -1,5 +1,7 @@
 [English](./README.md) · 简体中文
 
+[![CI](https://github.com/1438388098-glitch/fakao-shuati/actions/workflows/ci.yml/badge.svg)](https://github.com/1438388098-glitch/fakao-shuati/actions/workflows/ci.yml)
+
 # 法考主观题刷题平台（fakao-shuati）
 
 自托管的法考主观题备考站：题库浏览、限时作答、**AI 按采分点批改**、深度复盘报告、统计看板、错题本、采分点背诵。单进程 Express + Node 内置 SQLite，零原生依赖，一台便宜 VPS 即可跑。
