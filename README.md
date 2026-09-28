@@ -1,57 +1,57 @@
-# 法考主观题刷题平台（fakao-shuati）
+English · [简体中文](./README.zh-CN.md)
 
-> **English TL;DR** — A self-hosted bar-exam (法考) essay practice platform: question bank browsing, timed answering, **AI grading against official scoring points** (✓ full / △ partial / ✗ miss), deep review reports, statistics dashboard, error book and recitation mode. Single-process Express + Node's built-in SQLite — zero native dependencies, runs on a cheap VPS. 5 smoke tests covering the full grading chain with a mocked AI API.
+# fakao-shuati — Self-Hosted Bar-Exam Essay Practice Platform
 
-自托管的法考主观题备考站：题库浏览、限时作答、**AI 按采分点批改**、深度复盘报告、统计看板、错题本、采分点背诵。单进程 Express + Node 内置 SQLite，零原生依赖，一台便宜 VPS 即可跑。
+A self-hosted practice site for the Chinese bar exam (法考) essay paper: question bank browsing, timed answering, **AI grading against official scoring points** (✓ full / △ partial / ✗ miss), in-depth review reports, statistics dashboard, wrong-answer book and scoring-point recitation mode. Single-process Express + Node's built-in SQLite — zero native dependencies, runs on a cheap VPS. 5 smoke tests cover the full grading chain with a mocked AI API.
 
-> 本仓库**不含任何题目、答案或评分标准数据**。你需要自备拥有合法使用权的题库文件（格式见下文），放入数据目录即可。
+> **This repository contains no questions, answers, or scoring-rubric data of any kind.** You must supply question-bank files you are legally entitled to use (format below) and place them into the data directory yourself.
 
-## 功能
+## Features
 
-- **题库**：按科目/分组浏览，题目状态跟踪（未做/草稿/已批改）
-- **作答**：左右卡片布局（题干常驻左侧），多小问独立作答框，5 秒自动保存，考前倒计时，模拟计时器
-- **AI 批改**：一键提交，AI 逐采分点判定（✓ 全对 / △ 半对 / ✗ 未命中），输出深度复盘报告（逐点对照、连锁失分警示、原文对照、提分建议）
-- **报告**：Markdown 深度复盘 + 结构化得分数据，支持人工导入第三方报告
-- **统计看板**：得分率与采分点命中率趋势、丢分点类型分布（结论/依据/分析）、科目覆盖进度
-- **错题本**：按未命中采分点自动派生，支持重刷销号
-- **背诵**：翻卡式采分点背诵模式，标记已掌握
-- **多用户**：数据按账号隔离（适合和朋友拼一台服务器）
-- **深浅色主题**：跟随系统 + 手动切换
+- **Question bank**: browse by subject/group, per-question status tracking (not attempted / draft / graded)
+- **Answering**: two-column card layout (stem stays pinned on the left), independent answer box per sub-question, 5-second autosave, exam-day countdown, mock timer
+- **AI grading**: one-click submit; the AI judges each scoring point (✓ full / △ half / ✗ miss) and outputs an in-depth review report (point-by-point comparison, cascade-loss warnings, answer-vs-response comparison, improvement advice)
+- **Reports**: Markdown in-depth review + structured score data; manual import of third-party reports supported
+- **Statistics dashboard**: score-rate and scoring-point hit-rate trends, missed-point type distribution (conclusion / basis / analysis), subject coverage progress
+- **Wrong-answer book**: derived automatically from missed scoring points; re-attempt a question to clear its entries
+- **Recitation**: flashcard-style scoring-point memorization; mark points as mastered
+- **Multi-user**: data isolated per account (suitable for sharing one server with friends)
+- **Dark/light theme**: follows the system + manual toggle
 
-## 快速开始
+## Quick Start
 
-要求 Node.js ≥ 22.5（用到内置 `node:sqlite`）。
+Requires Node.js ≥ 22.5 (uses the built-in `node:sqlite`).
 
 ```bash
 npm install
-FAKAO_DATA_DIR=./题库数据 npm start   # 默认 http://127.0.0.1:3210
+FAKAO_DATA_DIR=./题库数据 npm start   # default: http://127.0.0.1:3210
 ```
 
-1. 首次访问 `/setup` 创建管理员账号（不预置任何账号）。
-2. 把题库文件放进 `FAKAO_DATA_DIR` 目录（默认 `./题库数据`），格式见下文。
-3. 在「设置」页填写 AI API（或用环境变量，见下文）。
-4. 去做题，交卷，等报告。
+1. On first visit, open `/setup` to create the admin account (no account is pre-created).
+2. Put your question-bank files into the `FAKAO_DATA_DIR` directory (default `./题库数据`, a Chinese directory name meaning "question-bank data"); format below.
+3. Fill in the AI API on the "Settings" page (or use environment variables, see below).
+4. Answer questions, submit, wait for the report.
 
-### 环境变量
+### Environment Variables
 
-| 变量 | 说明 | 默认 |
+| Variable | Description | Default |
 |---|---|---|
-| `PORT` | 监听端口 | `3210` |
-| `BASE_PATH` | 反向代理子路径部署（如 `/shuati`） | 空 |
-| `DATA_DIR` | 运行数据目录（SQLite、作答、批改记录） | `./data` |
-| `FAKAO_DATA_DIR` | 题库数据目录（只读） | `./题库数据` |
-| `AI_MODE` | `api` / `cli` / 留空自动 | 自动 |
-| `AI_FORMAT` | API 格式：`openai`（/chat/completions）或 `anthropic`（/v1/messages） | `openai` |
-| `AI_BASE_URL` | API 端点，到版本号为止，如 `https://api.deepseek.com/v1` | — |
-| `AI_API_KEY` | API Key（也可在设置页填，存服务器数据库，页面回显只留尾 4 位） | — |
-| `AI_MODEL` | 模型名，如 `deepseek-chat` / `glm-4.7-flash` / `gpt-4o-mini` | — |
-| `AI_MAX_TOKENS` | 单次批改输出上限 | `16000` |
+| `PORT` | Listening port | `3210` |
+| `BASE_PATH` | Sub-path deployment behind a reverse proxy (e.g. `/shuati`) | empty |
+| `DATA_DIR` | Runtime data directory (SQLite, answers, grading records) | `./data` |
+| `FAKAO_DATA_DIR` | Question-bank data directory (read-only) | `./题库数据` |
+| `AI_MODE` | `api` / `cli` / leave empty for auto | auto |
+| `AI_FORMAT` | API format: `openai` (/chat/completions) or `anthropic` (/v1/messages) | `openai` |
+| `AI_BASE_URL` | API endpoint, up to the version segment, e.g. `https://api.deepseek.com/v1` | — |
+| `AI_API_KEY` | API key (can also be set on the Settings page; stored in the server's own database, the page echoes only the last 4 characters) | — |
+| `AI_MODEL` | Model name, e.g. `deepseek-chat` / `glm-4.7-flash` / `gpt-4o-mini` | — |
+| `AI_MAX_TOKENS` | Output cap per grading run | `16000` |
 
-任何 OpenAI 兼容端点（OpenAI / DeepSeek / 智谱 GLM / Kimi / 本地 ollama+网关等）与 Anthropic 兼容端点都可用，设置页填 Base URL + Key + 模型名即可，**换模型不用改一行代码**。
+Any OpenAI-compatible endpoint (OpenAI / DeepSeek / Zhipu GLM / Kimi / local ollama + gateway, etc.) and any Anthropic-compatible endpoint works: fill in Base URL + Key + model name on the Settings page — **switching models requires changing zero lines of code**.
 
-## 题库数据格式
+## Question Bank Data Format
 
-`FAKAO_DATA_DIR` 下每个科目一个 `*_raw.json`，科目清单由同目录 `subjects.json` 定义（缺省时自动扫描目录内全部 `*_raw.json`，示例见 [`examples/subjects.example.json`](examples/subjects.example.json)）：
+Under `FAKAO_DATA_DIR`, one `*_raw.json` per subject; the subject list is defined by `subjects.json` in the same directory (when absent, all `*_raw.json` in the directory are scanned automatically; see [`examples/subjects.example.json`](examples/subjects.example.json) for an example):
 
 ```json
 [
@@ -59,11 +59,11 @@ FAKAO_DATA_DIR=./题库数据 npm start   # 默认 http://127.0.0.1:3210
 ]
 ```
 
-- `key`：URL 与数据库里的科目标识，建库后**不可更改**
-- `alias`：批改提示词里的科目叫法
-- `group`：题库页的分组标题（如「历年真题」「冲刺专项」）
+- `key`: the subject identifier used in URLs and the database; **must not be changed** once the database is created
+- `alias`: the subject name used in the grading prompt
+- `group`: group heading shown on the bank page (e.g. "past papers", "sprint specials")
 
-题目文件格式：
+Question file format:
 
 ```json
 {
@@ -84,38 +84,38 @@ FAKAO_DATA_DIR=./题库数据 npm start   # 默认 http://127.0.0.1:3210
 }
 ```
 
-`subKeyWord` 是**采分点评分标准**（JSON 字符串），这是 AI 批改的质量核心：
+`subKeyWord` is the **scoring-point rubric** (a JSON string) — the heart of AI grading quality:
 
-| 字段 | 说明 |
+| Field | Description |
 |---|---|
-| `text` | 采分点表述（AI 判定的目标） |
-| `score` | 该点分值（各点之和 = 小问分值） |
-| `whiteList` | 等价表述白名单（命中即算该点成立） |
-| `blackList` | 黑名单表述（考生自己写出的错误定性，触发连锁失分） |
+| `text` | The scoring point statement (what the AI judges against) |
+| `score` | Points for this item (the items sum to the sub-question's score) |
+| `whiteList` | Equivalent expressions (hit any and the point counts as made) |
+| `blackList` | Blacklisted expressions (a wrong conclusion written by the examinee, triggering cascade loss) |
 
-测试夹具 [`test/smoke.test.cjs`](test/smoke.test.cjs) 里有一个最小可运行的完整示例。
+The test fixture [`test/smoke.test.cjs`](test/smoke.test.cjs) contains a minimal, runnable complete example.
 
-## AI 批改原理
+## How AI Grading Works
 
-提交作答后，平台把题干、逐问采分点（含白/黑名单）、参考答案与评分规则组装成提示词发给 AI，要求其：
+After a submission, the platform assembles the stem, per-sub-question scoring points (with white/black lists), reference answers and grading rules into a prompt and sends it to the AI, asking it to:
 
-1. 逐点判定（✓ 满分 / △ 半分 / ✗ 零分，不倒扣），标注点类型（结论/依据/分析）与置信度；
-2. 结论性定性错误触发连锁失分；
-3. 输出结构化 JSON（入库、派生错题本）+ Markdown 深度复盘报告（落盘到 `data/批改记录/`）。
+1. Judge point by point (✓ full / △ half / ✗ zero, never negative), tagging each point's type (conclusion / basis / analysis) and confidence;
+2. A wrong conclusive characterization triggers cascade loss on dependent points;
+3. Output structured JSON (stored in the database, feeds the wrong-answer book) + a Markdown in-depth review report (written to `data/批改记录/`, a directory whose name means "grading records").
 
-批改方式三选一（设置页可切换）：
+Three grading modes (switchable on the Settings page):
 
-- **API 直连**（推荐）：上面表格里的三个字段填上就行；
-- **本地 CLI**（高级）：调用本机 AI 编码 CLI（`GRADER_CMD`，如 `claude -p {prompt}`）配合 [fakao-grader 评分技能](https://github.com/1438388098-glitch/fakao-grader)；
-- **人工导入**：任何方式失败时，可在报告导入页粘贴 JSON + Markdown 补录。
+- **Direct API** (recommended): just fill in the three fields from the table above;
+- **Local CLI** (advanced): invoke a local AI coding CLI (`GRADER_CMD`, e.g. `claude -p {prompt}`) together with the [fakao-grader grading skill](https://github.com/1438388098-glitch/fakao-grader);
+- **Manual import**: if everything else fails, paste JSON + Markdown on the report-import page.
 
-另有二级兜底：`WORKER_TOKEN=xxx SERVER=https://你的域名 npm run worker` 可在一台有 AI 环境的电脑上跑批改工人，自动认领服务器上失败的任务。
+There is also a second-level fallback: `WORKER_TOKEN=xxx SERVER=https://your-domain npm run worker` runs a grading worker on a machine that has AI access, automatically claiming failed tasks from the server.
 
-## 部署与安全
+## Deployment & Security
 
-- 本项目为**私人自托管**设计：全站密码保护、`noindex` 响应头、worker 接口走随机 token。请勿公开暴露在无防护的公网域名下，或至少加一层反代 basic auth。
-- API Key 存在你自己的服务器 SQLite 里，不进代码、不进日志。
-- 反代示例（nginx，子路径）：
+- This project is designed for **private self-hosting**: site-wide password protection, `noindex` response headers, and the worker API guarded by a random token. Do not expose it publicly on the open internet unprotected, or at least add a reverse-proxy basic auth layer.
+- The API key is stored in your own server's SQLite database — never in code, never in logs.
+- Reverse proxy example (nginx, sub-path):
 
 ```nginx
 location ^~ /shuati/ {
@@ -125,19 +125,19 @@ location ^~ /shuati/ {
 }
 ```
 
-## 测试
+## Testing
 
 ```bash
 npm test
 ```
 
-5 个冒烟测试：题库加载、认证流程数据链、报告采集入库、Markdown 渲染、**mock API 端到端批改**（起本地假端点走完整 `processOne` 链路）。
+5 smoke tests: question-bank loading, the authentication data chain, report ingestion into the database, Markdown rendering, and an **end-to-end mocked-API grading** (spins up a local fake endpoint and runs the full `processOne` chain).
 
-## 版权与免责声明
+## Copyright & Disclaimer
 
-- 本仓库是纯工具，**不含任何受版权保护的题目、答案、解析或评分标准**。
-- 使用者需自行准备拥有合法使用权的题库数据，并仅限个人学习使用，不得传播。
-- AI 批改结果仅供练习参考，与真实阅卷评分存在差异。
+- This repository is a pure tool and **contains no copyrighted questions, answers, explanations, or scoring rubrics**.
+- Users must supply question data they are legally entitled to use, for personal study only; do not redistribute.
+- AI grading results are for practice reference only and differ from real exam marking.
 
 ## License
 
