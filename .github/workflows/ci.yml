@@ -1,0 +1,26 @@
+# CI：全量测试门禁（npm test）
+# 依赖说明：仅 express/ejs 两个运行时依赖，npm install 后 node --test 跑全部用例。
+# Node 版本说明：src/db.js 依赖内置 node:sqlite（需 Node ≥22.5，22.13 起免 flag），
+# 故不能用 Node 18/20，取当前 22.x LTS 线。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 全量测试（node --test）
+        run: npm test
