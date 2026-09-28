@@ -1,0 +1,5 @@
+<% /* 中 / EN 界面语言切换：点击写入 localStorage + cookie 后刷新（处理逻辑在 app.js） */ %>
+<span class="lang-sw" role="group" aria-label="界面语言 / UI language">
+  <button type="button" data-lang-switch="zh" class="<%= lang !== 'en' ? 'on' : '' %>">中</button>
+  <button type="button" data-lang-switch="en" class="<%= lang === 'en' ? 'on' : '' %>">EN</button>
+</span>

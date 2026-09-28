@@ -1,12 +1,12 @@
 <%- include('partials/head', { title }) %>
-<div class="page-head"><div class="eyebrow">数据都从这里看</div><h1>统计看板</h1></div>
+<div class="page-head"><div class="eyebrow"><%= t('dash.eyebrow') %></div><h1><%= t('page.dashboard') %></h1></div>
 <% if (!points.length) { %>
-  <div class="card"><p class="muted">还没有批改记录——去做第一题吧。<a href="<%= base %>/">进题库 →</a></p></div>
+  <div class="card"><p class="muted"><%= t('dash.empty') %><a href="<%= base %>/"><%= t('dash.toBank') %></a></p></div>
 <% } else { %>
-<div class="card"><h2>采分点得分率 & 命中率趋势</h2><canvas id="chartTrend" height="90"></canvas></div>
-<div class="card"><h2>丢分采分点类型分布</h2><canvas id="chartMiss" height="90"></canvas></div>
+<div class="card"><h2><%= t('dash.trend') %></h2><canvas id="chartTrend" height="90"></canvas></div>
+<div class="card"><h2><%= t('dash.missDist') %></h2><canvas id="chartMiss" height="90"></canvas></div>
 <% } %>
-<h2>科目覆盖</h2>
+<h2><%= t('dash.cover') %></h2>
 <% for (const c of cover) { %>
   <div class="card cover">
     <div class="cover-name"><%= c.name %> <span class="muted small"><%= c.done %>/<%= c.total %></span></div>
@@ -24,17 +24,18 @@
   new Chart(document.getElementById('chartTrend'), {
     type: 'line',
     data: { labels: P.map(p => p.label), datasets: [
-      { label: '得分率%', data: P.map(p => p.pct), borderColor: cv('--cinnabar'), tension: .3 },
-      { label: '采分点命中率%', data: P.map(p => p.hitRate), borderColor: cv('--sage'), tension: .3 },
+      { label: t('dash.scorePct'), data: P.map(p => p.pct), borderColor: cv('--cinnabar'), tension: .3 },
+      { label: t('dash.hitPct'), data: P.map(p => p.hitRate), borderColor: cv('--sage'), tension: .3 },
     ]},
     options: { animation: false, scales: { y: { min: 0, max: 100 } } }
   });
+  /* 图表数据键（p.misses 的「结论/依据/分析」）来自批改 JSON，属动态数据不翻译；仅标签走 t() */
   new Chart(document.getElementById('chartMiss'), {
     type: 'bar',
     data: { labels: P.map(p => p.label), datasets: [
-      { label: '结论', data: P.map(p => p.misses['结论']), backgroundColor: cv('--cinnabar') },
-      { label: '依据', data: P.map(p => p.misses['依据']), backgroundColor: cv('--amber') },
-      { label: '分析', data: P.map(p => p.misses['分析']), backgroundColor: cv('--muted') },
+      { label: t('dash.typeConclusion'), data: P.map(p => p.misses['结论']), backgroundColor: cv('--cinnabar') },
+      { label: t('dash.typeBasis'), data: P.map(p => p.misses['依据']), backgroundColor: cv('--amber') },
+      { label: t('dash.typeAnalysis'), data: P.map(p => p.misses['分析']), backgroundColor: cv('--muted') },
     ]},
     options: { animation: false, scales: { x: { stacked: true }, y: { stacked: true } } }
   });

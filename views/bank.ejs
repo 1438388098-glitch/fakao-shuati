@@ -1,29 +1,29 @@
 <%- include('partials/head', { title }) %>
 <div class="page-head">
-  <div class="eyebrow">备考卷 · 分科练习</div>
-  <h1>题库</h1>
-  <div class="sub">真题 34 题 · 冲刺 21 题 · 批改后自动生成错题与报告</div>
+  <div class="eyebrow"><%= t('bank.eyebrow') %></div>
+  <h1><%= t('page.bank') %></h1>
+  <div class="sub"><%= t('bank.sub') %></div>
 </div>
 <div class="strip">
-  <div class="cell"><div class="n" data-count="<%= subjects.reduce((a,s)=>a+s.questions.length,0) %>"><%= subjects.reduce((a,s)=>a+s.questions.length,0) %></div><div class="t">题目总数</div></div>
-  <div class="cell"><div class="n" data-count="<%= gradedCount %>"><%= gradedCount %></div><div class="t">已批改</div></div>
-  <div class="cell"><div class="n"><%= groups.length %><em> 组</em></div><div class="t">真题 / 冲刺</div></div>
-  <div class="cell"><div class="n"><%= countdownTarget ? Math.max(0, Math.ceil((new Date(countdownTarget) - Date.now()) / 86400000)) : '—' %><em> 天</em></div><div class="t">距主观题</div></div>
+  <div class="cell"><div class="n" data-count="<%= subjects.reduce((a,s)=>a+s.questions.length,0) %>"><%= subjects.reduce((a,s)=>a+s.questions.length,0) %></div><div class="t"><%= t('bank.total') %></div></div>
+  <div class="cell"><div class="n" data-count="<%= gradedCount %>"><%= gradedCount %></div><div class="t"><%= t('bank.graded') %></div></div>
+  <div class="cell"><div class="n"><%= groups.length %><em><%= t('bank.groupUnit') %></em></div><div class="t"><%= t('bank.groupsLabel') %></div></div>
+  <div class="cell"><div class="n"><%= countdownTarget ? Math.max(0, Math.ceil((new Date(countdownTarget) - Date.now()) / 86400000)) : '—' %><em><%= t('bank.dayUnit') %></em></div><div class="t"><%= t('bank.daysTo') %></div></div>
 </div>
 <% for (const g of groups) { const subs = subjects.filter(s => s.group === g); if (!subs.length) continue; %>
   <h2 class="sec"><%= g %></h2>
   <% for (const s of subs) { %>
     <div class="card">
       <div class="subject-head">
-        <h3><%= s.name %> <span class="muted small"><%= s.questions.length %> 题</span></h3>
-        <a class="btn ghost small" href="<%= base %>/recite?s=<%= s.key %>">背采分点</a>
+        <h3><%= s.name %> <span class="muted small"><%= t('bank.qCount', { n: s.questions.length }) %></span></h3>
+        <a class="btn ghost small" href="<%= base %>/recite?s=<%= s.key %>"><%= t('bank.recite') %></a>
       </div>
       <table class="qlist">
-        <thead><tr><th>题号</th><th>小问</th><th>总分</th><th style="width:110px">状态</th></tr></thead>
+        <thead><tr><th><%= t('bank.thQ') %></th><th><%= t('bank.thSubs') %></th><th><%= t('bank.thScore') %></th><th style="width:110px"><%= t('bank.thStatus') %></th></tr></thead>
         <tbody>
         <% for (const q of s.questions) {
-             const st = q.grading ? `已批改 ${q.grading.score}/${q.grading.full_score}`
-               : (q.attempt ? (q.attempt.status === 'draft' ? '草稿' : (q.attempt.status === 'failed' ? '批改失败' : q.attempt.status)) : '未做');
+             const st = q.grading ? t('bank.stGraded', { 0: q.grading.score, 1: q.grading.full_score })
+               : (q.attempt ? (q.attempt.status === 'draft' ? t('bank.stDraft') : (q.attempt.status === 'failed' ? t('bank.stFailed') : q.attempt.status)) : t('bank.stTodo'));
              const cls = q.grading ? 'ok' : (q.attempt ? (q.attempt.status === 'failed' ? 'fail' : 'doing') : '');
         %>
           <tr>

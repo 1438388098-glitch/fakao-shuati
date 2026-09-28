@@ -12,6 +12,15 @@
       location.reload();
     });
 
+    // 语言切换（中 / EN）：localStorage 为主存，同步写 cookie 供服务端渲染，刷新生效
+    document.querySelectorAll('[data-lang-switch]').forEach(b => b.addEventListener('click', () => {
+      const next = b.dataset.langSwitch;
+      if (!/^(zh|en)$/.test(next) || next === document.documentElement.getAttribute('lang').slice(0, 2)) return;
+      try { localStorage.setItem('lang', next); } catch (e) {}
+      document.cookie = 'fklang=' + next + ';path=/;max-age=31536000;SameSite=Lax';
+      location.reload();
+    }));
+
     // 数字滚动：服务端已渲染最终值，仅在页面可见时重播 0→目标 动画
     const nums = document.querySelectorAll('[data-count]');
     if (nums.length && !reduce && !document.hidden) {

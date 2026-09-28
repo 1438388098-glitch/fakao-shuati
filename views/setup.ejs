@@ -1,17 +1,18 @@
 <%- include('partials/head', { title, showNavFlag: false }) %>
 <div class="card narrow">
+  <div class="lang-standalone"><%- include('partials/lang') %></div>
   <div class="page-head">
-    <div class="eyebrow">首次使用</div>
-    <h1>建立账号</h1>
-    <p class="sub">创建主账号，开始你的备考卷。</p>
+    <div class="eyebrow"><%= t('setup.eyebrow') %></div>
+    <h1><%= t('setup.title') %></h1>
+    <p class="sub"><%= t('setup.sub') %></p>
   </div>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
   <form method="post" action="<%= base %>/setup">
-    <label>用户名（2~16 位，中文/字母/数字/下划线）</label>
+    <label><%= t('setup.userLabel') %></label>
     <input type="text" name="username" required autofocus autocomplete="username">
-    <label>密码（至少 4 位）</label>
+    <label><%= t('setup.pwLabel') %></label>
     <input type="password" name="password" required minlength="4" autocomplete="new-password">
-    <button type="submit" class="btn primary" style="width:100%">建立并进入</button>
+    <button type="submit" class="btn primary" style="width:100%"><%= t('setup.submit') %></button>
   </form>
 </div>
 <%- include('partials/foot') %>

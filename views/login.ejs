@@ -1,16 +1,17 @@
 <%- include('partials/head', { title, showNavFlag: false }) %>
 <div class="card narrow">
+  <div class="lang-standalone"><%- include('partials/lang') %></div>
   <div class="page-head">
-    <div class="eyebrow">进入备考卷</div>
-    <h1>登录</h1>
+    <div class="eyebrow"><%= t('login.eyebrow') %></div>
+    <h1><%= t('page.login') %></h1>
   </div>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
   <form method="post" action="<%= base %>/login">
-    <label>用户名</label>
+    <label><%= t('login.user') %></label>
     <input type="text" name="username" required autofocus autocomplete="username">
-    <label>密码</label>
+    <label><%= t('login.pw') %></label>
     <input type="password" name="password" required autocomplete="current-password">
-    <button type="submit" class="btn primary" style="width:100%">登录</button>
+    <button type="submit" class="btn primary" style="width:100%"><%= t('login.submit') %></button>
   </form>
 </div>
 <%- include('partials/foot') %>

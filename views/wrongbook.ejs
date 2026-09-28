@@ -1,16 +1,16 @@
 <%- include('partials/head', { title }) %>
-<h1>错题本 <span class="muted small">（未掌握 <%= rows.length %> 项）</span></h1>
-<% if (!rows.length) { %><div class="card"><p class="muted">空空如也。批改后未命中的采分点会自动出现在这里。</p></div><% } %>
+<h1><%= t('page.wrongbook') %> <span class="muted small"><%= t('wrong.count', { n: rows.length }) %></span></h1>
+<% if (!rows.length) { %><div class="card"><p class="muted"><%= t('wrong.empty') %></p></div><% } %>
 <% let curQ = null; %>
 <% for (const w of rows) { %>
   <% if (!curQ || curQ !== w.question_id) { curQ = w.question_id; if (w.q) { %>
     <div class="card">
       <div class="subject-head">
         <h3><%= w.q.snText %></h3>
-        <form method="post" action="<%= base %>/wrongbook/<%= w.id %>/rebrush"><button class="btn primary small">重刷此题</button></form>
+        <form method="post" action="<%= base %>/wrongbook/<%= w.id %>/rebrush"><button class="btn primary small"><%= t('wrong.rebrush') %></button></form>
       </div>
   <% } else { %>
-    <div class="card"><h3><%= w.question_id %>（题目已不在题库）</h3>
+    <div class="card"><h3><%= w.question_id %><%= t('wrong.gone') %></h3>
   <% } %>
       <ul class="misslist">
   <% } %>

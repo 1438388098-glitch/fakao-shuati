@@ -166,6 +166,13 @@ textarea { resize: vertical; line-height: 1.8; }
 [data-theme="light"] .i-sun { display: none; }
 [data-theme="dark"] .i-moon { display: none; }
 
+/* 界面语言切换（中 / EN），与主题按钮同款描边胶囊 */
+.lang-sw { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; flex: none; }
+.lang-sw button { background: none; border: 0; padding: 2px 10px; font-size: 11px; line-height: 1.5; cursor: pointer; color: var(--muted); transition: color .15s, background .15s; }
+.lang-sw button:hover { color: var(--ink); }
+.lang-sw button.on { color: var(--ink); background: var(--line-soft); font-weight: 650; }
+.lang-standalone { display: flex; justify-content: flex-end; margin: -4px 0 10px; }
+
 /* 批改等待：朱笔行进 */
 .grading-wait { position: relative; overflow: hidden; }
 .grading-wait::after {

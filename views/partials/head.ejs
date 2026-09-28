@@ -1,16 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="<%= lang === 'en' ? 'en' : 'zh-CN' %>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title><%= title %> · 法考刷题</title>
+<title><%= title %> · <%= t('brand.full') %></title>
 <script>
 /* 主题：localStorage 优先，其次跟随系统；在样式表加载前定案避免闪白 */
 (function () {
   var d = document.documentElement;
   var t = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   d.dataset.theme = t;
+  /* 语言：localStorage 为主存；cookie 供服务端渲染用，二者不一致时回写 cookie（下次导航生效） */
+  try {
+    var L = localStorage.getItem('lang'), m = document.cookie.match(/(?:^|;\s*)fklang=(zh|en)(?:;|$)/);
+    if ((L === 'zh' || L === 'en') && L !== (m && m[1])) document.cookie = 'fklang=' + L + ';path=/;max-age=31536000;SameSite=Lax';
+  } catch (e) {}
   /* 入场动画仅在渲染器可见时启用；不可见环境（后台/离屏）内容恒可见 */
   var enable = function () { d.classList.add('anim'); };
   if (!document.hidden) enable();
@@ -21,29 +26,39 @@
 </script>
 <link rel="stylesheet" href="<%= base %>/app.css?v=<%= assetV %>">
 <script>const base='<%= base %>';</script>
+<script>
+/* 界面文案：当前语言的字典 + 取词函数（含 {k} 占位符替换），供页面内脚本（计时器/自动保存/toast 等）使用 */
+window.I18N = <%- JSON.stringify(dict[lang] || dict.zh) %>;
+window.t = function (k, v) {
+  var s = window.I18N[k] != null ? window.I18N[k] : k;
+  if (v) for (var p in v) s = s.split('{' + p + '}').join(String(v[p]));
+  return s;
+};
+</script>
 </head>
 <body>
 <% const showNav = typeof showNavFlag === 'undefined' ? true : showNavFlag; %>
 <% if (showNav) { %>
 <div class="shell<%= typeof wideShell !== 'undefined' && wideShell ? ' shell-wide' : '' %>">
   <div class="shell-head">
-    <a class="brand" href="<%= base %>/">法考<b>刷题</b></a>
+    <a class="brand" href="<%= base %>/"><%= t('brand.a') %><b><%= t('brand.b') %></b></a>
     <div class="head-meta">
-      <% if (countdownTarget) { %><span class="cd">距主观题 <b><%= Math.max(0, Math.ceil((new Date(countdownTarget) - Date.now()) / 86400000)) %></b> 天</span><% } %>
-      <button type="button" class="theme-btn" id="themeBtn" aria-label="切换深色/浅色模式" title="切换深色/浅色模式">
+      <% if (countdownTarget) { %><span class="cd"><%- t('head.countdown', { n: Math.max(0, Math.ceil((new Date(countdownTarget) - Date.now()) / 86400000)) }) %></span><% } %>
+      <%- include('lang') %>
+      <button type="button" class="theme-btn" id="themeBtn" aria-label="<%= t('head.theme') %>" title="<%= t('head.theme') %>">
         <svg class="i-moon" viewBox="0 0 24 24"><path d="M20 13.5A8 8 0 0 1 10.5 4 8 8 0 1 0 20 13.5z"/></svg>
         <svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9L19 19M19 5l-2.1 2.1M7.1 16.9L5 19"/></svg>
       </button>
       <span class="uname"><%= user ? user.username : '' %></span>
-      <form method="post" action="<%= base %>/logout" class="inline"><button class="link">退出</button></form>
+      <form method="post" action="<%= base %>/logout" class="inline"><button class="link"><%= t('head.logout') %></button></form>
     </div>
   </div>
   <nav class="ftabs">
-    <a class="ftab" data-key="/" href="<%= base %>/">题库</a>
-    <a class="ftab" data-key="/dashboard" href="<%= base %>/dashboard">看板</a>
-    <a class="ftab" data-key="/wrongbook" href="<%= base %>/wrongbook">错题本</a>
-    <a class="ftab" data-key="/recite" href="<%= base %>/recite">背诵</a>
-    <a class="ftab" data-key="/settings" href="<%= base %>/settings">设置</a>
+    <a class="ftab" data-key="/" href="<%= base %>/"><%= t('nav.bank') %></a>
+    <a class="ftab" data-key="/dashboard" href="<%= base %>/dashboard"><%= t('nav.dashboard') %></a>
+    <a class="ftab" data-key="/wrongbook" href="<%= base %>/wrongbook"><%= t('nav.wrongbook') %></a>
+    <a class="ftab" data-key="/recite" href="<%= base %>/recite"><%= t('nav.recite') %></a>
+    <a class="ftab" data-key="/settings" href="<%= base %>/settings"><%= t('nav.settings') %></a>
   </nav>
   <main class="paper">
 <% } else { %>
